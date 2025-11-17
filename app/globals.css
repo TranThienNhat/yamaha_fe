@@ -1,26 +1,284 @@
-@import "tailwindcss";
+/* YouTube-style Global Styles */
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto", "Arial", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #f9f9f9;
+}
+
+/* ============================================ */
+/* YOUTUBE-STYLE COMPONENTS */
+/* ============================================ */
+
+/* Icon Button Hover Effect */
+.youtube-icon-btn:hover {
+  background: #f2f2f2 !important;
+}
+
+.youtube-icon-btn:active {
+  background: #e5e5e5 !important;
+}
+
+/* Smooth Transitions */
+.youtube-transition {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Card Hover Effect - YouTube Style */
+.youtube-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.youtube-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Text Truncate */
+.text-truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.text-truncate-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ============================================ */
+/* UNIFIED SIDEBAR - Light & Dark Theme */
+/* ============================================ */
+
+/* Light Theme Sidebar */
+.custom-sidebar.light-theme .ant-menu-inline {
+  background: #fff !important;
+  border: none !important;
+}
+
+.custom-sidebar.light-theme .ant-menu-inline .ant-menu-item {
+  border-radius: 10px !important;
+  margin: 0 8px 4px 5px !important;
+  height: 40px !important;
+  line-height: 40px !important;
+  padding: 0 16px !important;
+  background: transparent !important;
+}
+
+.custom-sidebar.light-theme .ant-menu-inline .ant-menu-item:hover {
+  background-color: #f2f2f2 !important;
+}
+
+.custom-sidebar.light-theme .ant-menu-inline .ant-menu-item-selected {
+  background-color: #f2f2f2 !important;
+  font-weight: 500 !important;
+}
+
+.custom-sidebar.light-theme .ant-menu-inline .ant-menu-item-selected::after {
+  display: none !important;
+  border: none !important;
+}
+
+.custom-sidebar.light-theme .ant-menu-inline .ant-menu-item .anticon {
+  font-size: 20px !important;
+  color: #030303 !important;
+}
+
+.custom-sidebar.light-theme .ant-menu-inline .ant-menu-item span {
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: #030303 !important;
+}
+
+.custom-sidebar.light-theme .ant-menu-inline .ant-menu-item-divider {
+  margin: 12px 0 !important;
+  background: #e5e5e5 !important;
+}
+
+/* Dark Theme Sidebar */
+.custom-sidebar.dark-theme .ant-menu-dark {
+  background: #000 !important;
+}
+
+.custom-sidebar.dark-theme .ant-menu-dark .ant-menu-item {
+  margin: 4px 12px !important;
+  border-radius: 8px !important;
+  height: 48px !important;
+  line-height: 48px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  padding: 0 16px !important;
+}
+
+.custom-sidebar.dark-theme .ant-menu-dark .ant-menu-item:hover {
+  background: #1a1a1a !important;
+  color: #fff !important;
+}
+
+.custom-sidebar.dark-theme .ant-menu-dark .ant-menu-item-selected {
+  background: #fff !important;
+  color: #000 !important;
+  font-weight: 600 !important;
+}
+
+.custom-sidebar.dark-theme .ant-menu-dark .ant-menu-item-selected::after {
+  display: none !important;
+  border: none !important;
+}
+
+.custom-sidebar.dark-theme .ant-menu-dark .ant-menu-item-selected .anticon {
+  color: #000 !important;
+}
+
+.custom-sidebar.dark-theme .ant-menu-dark .ant-menu-item .anticon {
+  font-size: 18px !important;
+  margin-right: 10px !important;
+}
+
+.custom-sidebar.dark-theme
+  .ant-menu-dark
+  .ant-menu-item
+  .ant-menu-title-content {
+  margin-left: 0 !important;
+}
+
+/* Card Hover Effect */
+.ant-card:hover {
+  transform: translateY(-2px);
+}
+
+/* Carousel Dots - YouTube Style */
+.custom-dots {
+  bottom: 16px !important;
+}
+
+.custom-dots li {
+  margin: 0 4px !important;
+}
+
+.custom-dots li button {
+  background: rgba(255, 255, 255, 0.5) !important;
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+  opacity: 1 !important;
+}
+
+.custom-dots li.slick-active button {
+  background: #fff !important;
+  width: 10px !important;
+  height: 10px !important;
+}
+
+/* Fix Carousel Height */
+.ant-carousel .slick-slide {
+  overflow: hidden;
+}
+
+.ant-carousel .slick-slide > div {
+  height: 100%;
+}
+
+.ant-carousel .slick-track {
+  display: flex !important;
+  align-items: center;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #909090;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #606060;
+}
+
+/* Button Hover Effects */
+.ant-btn:hover {
+  transform: scale(1.02);
+  transition: all 0.2s;
+}
+
+/* Remove default focus outline */
+.ant-btn:focus,
+.ant-input:focus {
+  outline: none;
+}
+
+/* ============================================ */
+/* ADMIN THEME - Black & White */
+/* ============================================ */
+
+/* Admin Tables */
+.ant-table-thead > tr > th {
+  background: #fafafa !important;
+  font-weight: 600;
+  color: #000;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background: #fafafa !important;
+}
+
+/* Admin Cards */
+.ant-card {
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.ant-card-head {
+  border-bottom: 1px solid #f0f0f0;
+  font-weight: 600;
+}
+
+/* Admin Buttons */
+.ant-btn-primary {
+  background: #000;
+  border-color: #000;
+  font-weight: 500;
+}
+
+.ant-btn-primary:hover {
+  background: #1a1a1a !important;
+  border-color: #1a1a1a !important;
+}
+
+/* Admin Form Items */
+.ant-form-item-label > label {
+  font-weight: 500;
+  color: #000;
+}
+
+/* Admin Modal */
+.ant-modal-header {
+  background: #fafafa;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.ant-modal-title {
+  font-weight: 600;
+  color: #000;
 }
