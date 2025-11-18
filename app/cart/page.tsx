@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import {
-  Layout,
   Card,
   Table,
   Button,
@@ -18,9 +17,6 @@ import { useRouter } from "next/navigation";
 import { authUtils } from "@/lib/auth";
 import { gioHangAPI, donHangAPI } from "@/lib/api";
 import type { GioHang } from "@/lib/types";
-import Header from "@/components/Header";
-
-const { Content } = Layout;
 
 export default function CartPage() {
   const router = useRouter();
@@ -56,7 +52,7 @@ export default function CartPage() {
     try {
       await gioHangAPI.capNhatSoLuong(maChiTiet, { so_luong: soLuong });
       fetchGioHang();
-    } catch (error) {
+    } catch (error: any) {
       message.error("Không thể cập nhật số lượng");
     }
   };
@@ -66,7 +62,7 @@ export default function CartPage() {
       await gioHangAPI.xoaSanPham(maChiTiet);
       message.success("Đã xóa sản phẩm");
       fetchGioHang();
-    } catch (error) {
+    } catch (error: any) {
       message.error("Không thể xóa sản phẩm");
     }
   };
@@ -92,7 +88,7 @@ export default function CartPage() {
         ten_khach_hang: values.ten_khach_hang,
         so_dien_thoai: values.so_dien_thoai,
         dia_chi: values.dia_chi,
-        chi_tiet_san_pham: gioHang.chi_tiet.map((item) => ({
+        chi_tiet_san_pham: gioHang.chi_tiet.map((item: any) => ({
           ma_san_pham: item.ma_san_pham,
           so_luong: item.so_luong,
         })),
@@ -103,7 +99,7 @@ export default function CartPage() {
       message.success("Đặt hàng thành công!");
       setCheckoutVisible(false);
       router.push("/orders");
-    } catch (error) {
+    } catch (error: any) {
       message.error("Không thể đặt hàng");
     }
   };
@@ -141,7 +137,7 @@ export default function CartPage() {
     {
       title: "Thao tác",
       key: "action",
-      render: (_: unknown, record: unknown) => (
+      render: (_: any, record: any) => (
         <Button
           icon={<DeleteOutlined />}
           danger
@@ -153,39 +149,37 @@ export default function CartPage() {
   ];
 
   const tongTien =
-    gioHang?.chi_tiet.reduce((sum, item) => sum + item.thanh_tien, 0) || 0;
+    gioHang?.chi_tiet.reduce(
+      (sum: number, item: any) => sum + item.thanh_tien,
+      0
+    ) || 0;
 
   return (
-    <Layout style={{ minHeight: "100vh" }}>
-      <Header />
-      <Content style={{ padding: "50px" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <Card title="Giỏ hàng của bạn">
-            {gioHang && gioHang.chi_tiet.length > 0 ? (
-              <>
-                <Table
-                  columns={columns}
-                  dataSource={gioHang.chi_tiet}
-                  rowKey="id"
-                  pagination={false}
-                />
-                <div style={{ marginTop: 24, textAlign: "right" }}>
-                  <h2>Tổng cộng: {tongTien.toLocaleString("vi-VN")} đ</h2>
-                  <Button
-                    type="primary"
-                    size="large"
-                    icon={<ShoppingOutlined />}
-                    onClick={handleCheckout}>
-                    Đặt hàng
-                  </Button>
-                </div>
-              </>
-            ) : (
-              <Empty description="Giỏ hàng trống" />
-            )}
-          </Card>
-        </div>
-      </Content>
+    <>
+      <Card title="Giỏ hàng của bạn">
+        {gioHang && gioHang.chi_tiet.length > 0 ? (
+          <>
+            <Table
+              columns={columns}
+              dataSource={gioHang.chi_tiet}
+              rowKey="id"
+              pagination={false}
+            />
+            <div style={{ marginTop: 24, textAlign: "right" }}>
+              <h2>Tổng cộng: {tongTien.toLocaleString("vi-VN")} đ</h2>
+              <Button
+                type="primary"
+                size="large"
+                icon={<ShoppingOutlined />}
+                onClick={handleCheckout}>
+                Đặt hàng
+              </Button>
+            </div>
+          </>
+        ) : (
+          <Empty description="Giỏ hàng trống" />
+        )}
+      </Card>
 
       <Modal
         title="Thông tin đặt hàng"
@@ -218,6 +212,6 @@ export default function CartPage() {
           </Form.Item>
         </Form>
       </Modal>
-    </Layout>
+    </>
   );
 }
