@@ -16,9 +16,12 @@ export interface SanPham {
   mo_ta?: string;
   hinh_anh?: string;
   hinh_anh_url?: string;
+  ma_danh_muc?: number;
   ten_danh_muc?: string;
+  danh_muc_ids?: number[]; // Mảng ID các danh mục (nếu sản phẩm thuộc nhiều danh mục)
   thong_so_ky_thuat?: string;
   noi_bat?: boolean;
+  da_xoa?: boolean; // Soft delete flag
 }
 
 export interface DanhMuc {
