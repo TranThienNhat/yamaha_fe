@@ -34,7 +34,9 @@ export default function ProductsPage() {
   const [sanPhams, setSanPhams] = useState<SanPham[]>([]);
   const [danhMucs, setDanhMucs] = useState<DanhMuc[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<SanPham[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedCategory, setSelectedCategory] = useState<number | "all">(
+    "all"
+  );
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(true);
   const user = authUtils.getUser();
@@ -45,10 +47,37 @@ export default function ProductsPage() {
         sanPhamAPI.layTatCa(),
         danhMucAPI.layTatCa(),
       ]);
-      setSanPhams(spRes.data);
+
+      // Lấy thông tin danh mục cho từng sản phẩm
+      const sanPhamsWithCategory = await Promise.all(
+        spRes.data.map(async (sp: SanPham) => {
+          try {
+            const categoryRes = await sanPhamAPI.layDanhMuc(sp.id);
+            const categories = categoryRes.data as Array<{
+              id: number;
+              ten_danh_muc: string;
+            }>;
+
+            // Lấy danh mục đầu tiên nếu có nhiều danh mục
+            const firstCategory =
+              categories && categories.length > 0 ? categories[0] : null;
+
+            return {
+              ...sp,
+              ma_danh_muc: firstCategory?.id,
+              ten_danh_muc: firstCategory?.ten_danh_muc,
+              danh_muc_ids: categories?.map((c) => c.id) || [],
+            };
+          } catch {
+            return sp;
+          }
+        })
+      );
+
+      setSanPhams(sanPhamsWithCategory);
       setDanhMucs(dmRes.data);
-      setFilteredProducts(spRes.data);
-    } catch (error) {
+      setFilteredProducts(sanPhamsWithCategory);
+    } catch {
       message.error("Lỗi khi tải dữ liệu");
     } finally {
       setLoading(false);
@@ -65,7 +94,10 @@ export default function ProductsPage() {
 
     // Lọc theo danh mục
     if (selectedCategory !== "all") {
-      filtered = filtered.filter((sp) => sp.ten_danh_muc === selectedCategory);
+      filtered = filtered.filter((sp) => {
+        const danhMucIds = sp.danh_muc_ids || [];
+        return danhMucIds.includes(selectedCategory as number);
+      });
     }
 
     // Tìm kiếm theo tên
@@ -95,7 +127,7 @@ export default function ProductsPage() {
         so_luong: 1,
       });
       message.success("Thêm vào giỏ hàng thành công");
-    } catch (error) {
+    } catch {
       message.error("Không thể thêm vào giỏ hàng");
     }
   };
@@ -118,7 +150,7 @@ export default function ProductsPage() {
       });
       message.success("Đang chuyển đến giỏ hàng...");
       router.push("/cart");
-    } catch (error) {
+    } catch {
       message.error("Không thể mua hàng");
     }
   };
@@ -171,7 +203,7 @@ export default function ProductsPage() {
                   suffixIcon={<FilterOutlined />}>
                   <Select.Option value="all">Tất cả danh mục</Select.Option>
                   {danhMucs.map((dm) => (
-                    <Select.Option key={dm.id} value={dm.ten_danh_muc}>
+                    <Select.Option key={dm.id} value={dm.id}>
                       {dm.ten_danh_muc}
                     </Select.Option>
                   ))}
@@ -188,7 +220,12 @@ export default function ProductsPage() {
           </div>
 
           {/* Products Grid */}
-          {filteredProducts.length > 0 ? (
+          {loading ? (
+            <Card
+              style={{ borderRadius: 12, textAlign: "center", padding: 40 }}>
+              <Text>Đang tải sản phẩm...</Text>
+            </Card>
+          ) : filteredProducts.length > 0 ? (
             <Row gutter={[16, 16]}>
               {filteredProducts.map((sp) => (
                 <Col xs={24} sm={12} md={8} lg={6} key={sp.id}>
@@ -205,6 +242,7 @@ export default function ProductsPage() {
                           cursor: "pointer",
                         }}
                         onClick={() => router.push(`/products/${sp.id}`)}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           alt={sp.ten_san_pham}
                           src={sp.hinh_anh_url || "/placeholder.png"}

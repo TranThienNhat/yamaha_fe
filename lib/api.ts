@@ -25,10 +25,13 @@ export const nguoiDungAPI = {
 
 // API Sản phẩm
 export const sanPhamAPI = {
-  layTatCa: () => api.get("/sanpham"),
+  layTatCa: (params?: { ma_danh_muc?: number }) =>
+    api.get("/sanpham", { params }),
   layNoiBat: (limit?: number) =>
     api.get("/sanpham/noibat", { params: { limit } }),
   layTheoId: (id: number) => api.get(`/sanpham/${id}`),
+  layTheoDanhMuc: (maDanhMuc: number) =>
+    api.get(`/sanpham/danhmuc/${maDanhMuc}`),
   layDanhMuc: (id: number) => api.get(`/sanpham/${id}/danhmuc`),
   layHinhAnh: (id: number) => api.get(`/sanpham/${id}/hinhanh`),
   them: (formData: FormData) =>
