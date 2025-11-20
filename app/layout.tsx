@@ -4,6 +4,8 @@ import "./globals.css";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { ConfigProvider, App } from "antd";
 import viVN from "antd/locale/vi_VN";
+import { AppProvider } from "@/contexts/AppContext";
+import { CartProvider } from "@/contexts/CartContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -34,7 +36,11 @@ export default function RootLayout({
                   '"Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
               },
             }}>
-            <App>{children}</App>
+            <App>
+              <AppProvider>
+                <CartProvider>{children}</CartProvider>
+              </AppProvider>
+            </App>
           </ConfigProvider>
         </AntdRegistry>
       </body>
