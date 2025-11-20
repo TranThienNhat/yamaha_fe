@@ -145,7 +145,7 @@ export default function AdminNewsPage() {
       render: (hinh_anh: string) =>
         hinh_anh ? (
           <Image
-            src={`http://localhost:5000/uploads/${hinh_anh}`}
+            src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/${hinh_anh}`}
             alt="Tin tức"
             width={60}
             height={60}
