@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Form, Input, Button, Typography, message, Divider } from "antd";
 import {
   UserOutlined,
@@ -16,7 +16,8 @@ import Link from "next/link";
 
 const { Title, Text } = Typography;
 
-export default function RegisterPage() {
+// 1. Tách logic chính ra component con
+function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
@@ -363,5 +364,25 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// 2. Component chính (default export) bọc Suspense
+export default function RegisterPage() {
+  return (
+    <Suspense
+      fallback={
+        <div
+          style={{
+            minHeight: "100vh",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}>
+          Đang tải...
+        </div>
+      }>
+      <RegisterForm />
+    </Suspense>
   );
 }
