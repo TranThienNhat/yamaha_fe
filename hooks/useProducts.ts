@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { sanPhamService } from "@/services/sanPhamService";
-import { SanPham } from "@/types";
+import { sanPhamAPI } from "@/lib/api";
+import { SanPham } from "@/lib/types";
 
 let cachedProducts: SanPham[] | null = null;
 let cacheTime: number = 0;
@@ -24,7 +24,8 @@ export function useProducts() {
 
     try {
       setLoading(true);
-      const data = await sanPhamService.layTatCa();
+      const response = await sanPhamAPI.layTatCa();
+      const data = response.data;
       cachedProducts = data;
       cacheTime = now;
       setProducts(data);
@@ -50,8 +51,8 @@ export function useProduct(id: number) {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        const data = await sanPhamService.layTheoId(id);
-        setProduct(data);
+        const response = await sanPhamAPI.layTheoId(id);
+        setProduct(response.data);
       } catch (error) {
         console.error("Lỗi khi lấy sản phẩm:", error);
       } finally {
