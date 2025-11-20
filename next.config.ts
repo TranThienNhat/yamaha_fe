@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
 
   // Cấu hình ảnh
   images: {
+    unoptimized: true, // Cho phép load ảnh HTTP từ VPS
     remotePatterns: [
       {
         protocol: "http",
