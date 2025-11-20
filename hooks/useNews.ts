@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { tinTucService } from "@/services/tinTucService";
-import { TinTuc } from "@/types";
+import { tinTucAPI } from "@/lib/api";
+import { TinTuc } from "@/lib/types";
 
 let cachedNews: TinTuc[] | null = null;
 let cacheTime: number = 0;
@@ -24,7 +24,8 @@ export function useNews() {
 
     try {
       setLoading(true);
-      const data = await tinTucService.layTatCa();
+      const response = await tinTucAPI.layTatCa();
+      const data = response.data;
       cachedNews = data;
       cacheTime = now;
       setNews(data);
@@ -50,8 +51,8 @@ export function useNewsDetail(id: number) {
     const fetchNewsDetail = async () => {
       try {
         setLoading(true);
-        const data = await tinTucService.layTheoId(id);
-        setNewsItem(data);
+        const response = await tinTucAPI.layTheoId(id);
+        setNewsItem(response.data);
       } catch (error) {
         console.error("Lỗi khi lấy tin tức:", error);
       } finally {

@@ -7,8 +7,8 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import { authUtils } from "@/utils/auth";
-import { NguoiDung } from "@/types";
+import { authUtils } from "@/lib/auth";
+import { NguoiDung } from "@/lib/types";
 
 interface AppContextType {
   user: NguoiDung | null;
