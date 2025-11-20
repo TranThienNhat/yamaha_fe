@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Form, Input, Button, Typography, message, Divider } from "antd";
 import {
   UserOutlined,
@@ -14,7 +14,8 @@ import Link from "next/link";
 
 const { Title, Text } = Typography;
 
-export default function LoginPage() {
+// 1. Tách logic chính ra một component riêng (LoginForm)
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
@@ -312,5 +313,25 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// 2. Component chính (default export) chỉ làm nhiệm vụ bọc Suspense
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div
+          style={{
+            minHeight: "100vh",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}>
+          Đang tải...
+        </div>
+      }>
+      <LoginForm />
+    </Suspense>
   );
 }
