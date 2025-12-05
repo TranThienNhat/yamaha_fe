@@ -162,15 +162,32 @@ export default function AdminBannersPage() {
       dataIndex: "hinh_anh_url",
       key: "hinh_anh_url",
       width: 120,
-      render: (url: string, record: Banner) => (
-        <Image
-          src={url}
-          alt={record.tieu_de}
-          width={100}
-          height={60}
-          style={{ objectFit: "cover", borderRadius: 4 }}
-        />
-      ),
+      render: (url: string, record: Banner) =>
+        url ? (
+          <img
+            src={url}
+            alt={record.tieu_de}
+            style={{
+              width: 100,
+              height: 60,
+              objectFit: "cover",
+              borderRadius: 4,
+            }}
+          />
+        ) : (
+          <div
+            style={{
+              width: 100,
+              height: 60,
+              background: "#f0f0f0",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: 4,
+            }}>
+            Không có ảnh
+          </div>
+        ),
     },
     {
       title: "Tiêu đề",

@@ -69,7 +69,19 @@ export default function AdminNewsPage() {
 
   const handleEdit = (record: TinTuc) => {
     setEditingNews(record);
-    form.setFieldsValue(record);
+    form.setFieldsValue({
+      ...record,
+      hinh_anh: record.hinh_anh
+        ? [
+            {
+              uid: "-1",
+              name: record.hinh_anh,
+              status: "done",
+              url: `${process.env.NEXT_PUBLIC_API_URL}/uploads/${record.hinh_anh}`,
+            },
+          ]
+        : [],
+    });
     setModalVisible(true);
   };
 
@@ -144,12 +156,15 @@ export default function AdminNewsPage() {
       width: 100,
       render: (hinh_anh: string) =>
         hinh_anh ? (
-          <Image
+          <img
             src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/${hinh_anh}`}
             alt="Tin tức"
-            width={60}
-            height={60}
-            style={{ objectFit: "cover" }}
+            style={{
+              width: 60,
+              height: 60,
+              objectFit: "cover",
+              borderRadius: 4,
+            }}
           />
         ) : (
           <div
@@ -253,7 +268,7 @@ export default function AdminNewsPage() {
               if (Array.isArray(e)) {
                 return e;
               }
-              return e?.fileList;
+              return e?.fileList || [];
             }}>
             <Upload
               listType="picture-card"

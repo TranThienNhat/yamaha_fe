@@ -253,7 +253,20 @@ export default function AdminProductsPage() {
       key: "hinh_anh_url",
       width: 100,
       render: (url: string) =>
-        url ? <Image src={url} width={60} /> : "Không có",
+        url ? (
+          <img
+            src={url}
+            alt="Product"
+            style={{
+              width: 60,
+              height: 60,
+              objectFit: "cover",
+              borderRadius: 4,
+            }}
+          />
+        ) : (
+          "Không có"
+        ),
     },
     {
       title: "Tên sản phẩm",

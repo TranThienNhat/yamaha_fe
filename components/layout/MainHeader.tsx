@@ -83,20 +83,15 @@ export default function MainHeader({ onMenuClick }: MainHeaderProps) {
           onMouseLeave={(e) =>
             (e.currentTarget.style.background = "transparent")
           }>
-          <div
+          <img
+            src="/yamaha-logo.png"
+            alt="Yamaha"
             style={{
               width: 32,
               height: 32,
-              background: "linear-gradient(135deg, #FF0000 0%, #CC0000 100%)",
-              borderRadius: 6,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 18,
-              boxShadow: "0 2px 4px rgba(255,0,0,0.2)",
-            }}>
-            🏍️
-          </div>
+              objectFit: "contain",
+            }}
+          />
           <Title
             level={4}
             style={{
@@ -215,7 +210,9 @@ export default function MainHeader({ onMenuClick }: MainHeaderProps) {
                 onMouseLeave={(e) =>
                   (e.currentTarget.style.transform = "scale(1)")
                 }>
-                {(user.ho_ten || user.ten_dang_nhap).charAt(0).toUpperCase()}
+                {(user.ho_ten || user.ten_dang_nhap || "U")
+                  .charAt(0)
+                  .toUpperCase()}
               </Button>
             </Dropdown>
           </>
