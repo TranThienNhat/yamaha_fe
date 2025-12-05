@@ -90,7 +90,11 @@ function RegisterForm() {
                 fontSize: 28,
                 boxShadow: "0 4px 12px rgba(255,0,0,0.3)",
               }}>
-              🏍️
+              <img
+                src="/yamaha-logo.png"
+                alt="Yamaha"
+                style={{ width: 48, height: 48, objectFit: "contain" }}
+              />
             </div>
             <Title
               level={1}

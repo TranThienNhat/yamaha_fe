@@ -36,15 +36,22 @@ export default function Header() {
       }}>
       <div style={{ display: "flex", alignItems: "center", gap: 40 }}>
         <div style={{ cursor: "pointer" }} onClick={() => router.push("/")}>
-          <h3
-            style={{
-              color: "white",
-              margin: 0,
-              fontWeight: "bold",
-              fontSize: 24,
-            }}>
-            🏍️ YAMAHA
-          </h3>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <img
+              src="/yamaha-logo.png"
+              alt="Yamaha"
+              style={{ height: 32, objectFit: "contain" }}
+            />
+            <h3
+              style={{
+                color: "white",
+                margin: 0,
+                fontWeight: "bold",
+                fontSize: 24,
+              }}>
+              YAMAHA
+            </h3>
+          </div>
         </div>
         <Space size="large">
           <Button

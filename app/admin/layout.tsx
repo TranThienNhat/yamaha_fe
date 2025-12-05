@@ -29,9 +29,12 @@ export default function AdminLayout({
 }) {
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
-  const user = authUtils.getUser();
+  const [user, setUser] = useState<unknown>(null);
 
   useEffect(() => {
+    const currentUser = authUtils.getUser();
+    setUser(currentUser);
+
     if (!authUtils.isAdmin()) {
       router.push("/");
     }
@@ -88,23 +91,19 @@ export default function AdminLayout({
         fontSize: 20,
         fontWeight: "bold",
       }}>
-      🏍️
+      <img
+        src="/yamaha-logo.png"
+        alt="Yamaha"
+        style={{ width: 32, height: 32, objectFit: "contain" }}
+      />
     </div>
   ) : (
     <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-      <div
-        style={{
-          width: 40,
-          height: 40,
-          background: "#FF0000",
-          borderRadius: 8,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontSize: 20,
-        }}>
-        🏍️
-      </div>
+      <img
+        src="/yamaha-logo.png"
+        alt="Yamaha"
+        style={{ width: 40, height: 40, objectFit: "contain" }}
+      />
       <div>
         <Title
           level={5}
