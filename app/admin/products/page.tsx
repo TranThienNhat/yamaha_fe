@@ -48,16 +48,20 @@ export default function AdminProductsPage() {
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [categoryModalVisible, setCategoryModalVisible] = useState(false);
+  const [quantityModalVisible, setQuantityModalVisible] = useState(false);
   const [editingProduct, setEditingProduct] = useState<SanPham | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<SanPham | null>(null);
   const [form] = Form.useForm();
   const [categoryForm] = Form.useForm();
+  const [quantityForm] = Form.useForm();
   const [fileList, setFileList] = useState<unknown[]>([]);
 
   useEffect(() => {
     const fetchSanPhams = async () => {
       setLoading(true);
       try {
-        const response = await sanPhamAPI.layTatCa();
+        // Use admin endpoint to get all products including hidden ones
+        const response = await sanPhamAPI.layTatCaAdmin();
         setSanPhams(response.data);
       } catch (error) {
         message.error("Không thể tải danh sách sản phẩm");
@@ -83,7 +87,8 @@ export default function AdminProductsPage() {
   const fetchSanPhams = async () => {
     setLoading(true);
     try {
-      const response = await sanPhamAPI.layTatCa();
+      // Use admin endpoint to get all products including hidden ones
+      const response = await sanPhamAPI.layTatCaAdmin();
       setSanPhams(response.data);
     } catch (error) {
       message.error("Không thể tải danh sách sản phẩm");
@@ -136,7 +141,24 @@ export default function AdminProductsPage() {
     }
   };
 
-  const handleToggleNoiBat = async (id: number, noiBat: boolean) => {
+  const handleUpdateQuantity = (record: SanPham) => {
+    setSelectedProduct(record);
+    quantityForm.setFieldsValue({ so_luong: record.so_luong });
+    setQuantityModalVisible(true);
+  };
+
+  const handleSubmitQuantity = async (values: { so_luong: number }) => {
+    if (!selectedProduct) return;
+    
+    try {
+      await sanPhamAPI.capNhatSoLuong(selectedProduct.id, values);
+      message.success("Đã cập nhật số lượng thành công");
+      setQuantityModalVisible(false);
+      fetchSanPhams();
+    } catch (error) {
+      message.error("Không thể cập nhật số lượng");
+    }
+  };
     try {
       const product = sanPhams.find((sp) => sp.id === id);
       if (!product) return;
@@ -188,6 +210,7 @@ export default function AdminProductsPage() {
       formData.append("mo_ta", values.mo_ta || "");
       formData.append("thong_so_ky_thuat", values.thong_so_ky_thuat || "");
       formData.append("noi_bat", values.noi_bat ? "1" : "0");
+      formData.append("so_luong", values.so_luong || "0");
 
       // Gửi danh sách ID danh mục - PHẢI APPEND TRƯỚC FILE
       console.log("DEBUG Frontend: danh_muc_ids =", values.danh_muc_ids);
@@ -280,6 +303,28 @@ export default function AdminProductsPage() {
       render: (gia: number) => `${gia.toLocaleString("vi-VN")} đ`,
     },
     {
+      title: "Số lượng",
+      dataIndex: "so_luong",
+      key: "so_luong",
+      width: 100,
+      render: (soLuong: number) => (
+        <span style={{ color: soLuong <= 0 ? "red" : "inherit" }}>
+          {soLuong}
+        </span>
+      ),
+    },
+    {
+      title: "Trạng thái",
+      key: "trang_thai",
+      width: 100,
+      render: (_: unknown, record: SanPham) => {
+        if (record.an) {
+          return <span style={{ color: "red" }}>Ẩn (Hết hàng)</span>;
+        }
+        return <span style={{ color: "green" }}>Hiển thị</span>;
+      },
+    },
+    {
       title: "Danh mục",
       key: "danh_muc",
       render: (_: unknown, record: SanPham) => (
@@ -300,7 +345,7 @@ export default function AdminProductsPage() {
     {
       title: "Thao tác",
       key: "action",
-      width: 150,
+      width: 200,
       render: (_: unknown, record: SanPham) => (
         <Space>
           <Button
@@ -308,6 +353,13 @@ export default function AdminProductsPage() {
             onClick={() => handleEdit(record)}
             size="small"
           />
+          <Button
+            type="primary"
+            size="small"
+            onClick={() => handleUpdateQuantity(record)}
+          >
+            Số lượng
+          </Button>
           <Popconfirm
             title="Bạn có chắc muốn xóa?"
             onConfirm={() => handleDelete(record.id)}
@@ -365,6 +417,17 @@ export default function AdminProductsPage() {
                 `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
               }
               parser={(value) => value!.replace(/\$\s?|(,*)/g, "")}
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="so_luong"
+            label="Số lượng"
+            rules={[{ required: true, message: "Vui lòng nhập số lượng" }]}>
+            <InputNumber
+              style={{ width: "100%" }}
+              min={0}
+              placeholder="Nhập số lượng sản phẩm"
             />
           </Form.Item>
 
@@ -450,6 +513,32 @@ export default function AdminProductsPage() {
             rules={[{ required: true, message: "Vui lòng nhập tên danh mục" }]}>
             <Input placeholder="Ví dụ: Xe côn tay, Xe tay ga..." />
           </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* Modal cập nhật số lượng */}
+      <Modal
+        title="Cập nhật số lượng"
+        open={quantityModalVisible}
+        onCancel={() => setQuantityModalVisible(false)}
+        onOk={() => quantityForm.submit()}>
+        <Form
+          form={quantityForm}
+          layout="vertical"
+          onFinish={handleSubmitQuantity}>
+          <Form.Item
+            name="so_luong"
+            label="Số lượng"
+            rules={[{ required: true, message: "Vui lòng nhập số lượng" }]}>
+            <InputNumber
+              style={{ width: "100%" }}
+              min={0}
+              placeholder="Nhập số lượng sản phẩm"
+            />
+          </Form.Item>
+          <p style={{ color: '#666', fontSize: '14px' }}>
+            Lưu ý: Khi số lượng = 0, sản phẩm sẽ tự động bị ẩn khỏi trang chủ
+          </p>
         </Form>
       </Modal>
     </div>

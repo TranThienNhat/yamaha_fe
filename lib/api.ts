@@ -27,6 +27,7 @@ export const nguoiDungAPI = {
 export const sanPhamAPI = {
   layTatCa: (params?: { ma_danh_muc?: number }) =>
     api.get("/sanpham", { params }),
+  layTatCaAdmin: () => api.get("/admin/sanpham"),
   layNoiBat: (limit?: number) =>
     api.get("/sanpham/noibat", { params: { limit } }),
   layTheoId: (id: number) => api.get(`/sanpham/${id}`),
@@ -43,6 +44,12 @@ export const sanPhamAPI = {
       headers: { "Content-Type": "multipart/form-data" },
     }),
   xoa: (id: number) => api.delete(`/sanpham/${id}`),
+  capNhatSoLuong: (id: number, data: { so_luong: number }) =>
+    api.put(`/sanpham/${id}/soluong`, data),
+  giamSoLuong: (id: number, data: { so_luong: number }) =>
+    api.put(`/sanpham/${id}/giam-soluong`, data),
+  tangSoLuong: (id: number, data: { so_luong: number }) =>
+    api.put(`/sanpham/${id}/tang-soluong`, data),
 };
 
 // API Danh mục

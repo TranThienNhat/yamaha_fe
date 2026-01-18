@@ -70,14 +70,29 @@ export default function ProductDetailPage() {
 
     if (!sanPham) return;
 
+    // Kiểm tra tồn kho
+    if (sanPham.so_luong !== undefined && sanPham.so_luong <= 0) {
+      message.error("Sản phẩm đã hết hàng");
+      return;
+    }
+
+    if (sanPham.so_luong !== undefined && soLuong > sanPham.so_luong) {
+      message.error(`Chỉ còn ${sanPham.so_luong} sản phẩm trong kho`);
+      return;
+    }
+
     try {
       await gioHangAPI.themSanPham(user.id, {
         ma_san_pham: sanPham.id,
         so_luong: soLuong,
       });
       message.success("Thêm vào giỏ hàng thành công");
-    } catch (error) {
-      message.error("Không thể thêm vào giỏ hàng");
+    } catch (error: any) {
+      if (error.response?.data?.message) {
+        message.error(error.response.data.message);
+      } else {
+        message.error("Không thể thêm vào giỏ hàng");
+      }
     }
   };
 
@@ -92,6 +107,17 @@ export default function ProductDetailPage() {
 
     if (!sanPham) return;
 
+    // Kiểm tra tồn kho
+    if (sanPham.so_luong !== undefined && sanPham.so_luong <= 0) {
+      message.error("Sản phẩm đã hết hàng");
+      return;
+    }
+
+    if (sanPham.so_luong !== undefined && soLuong > sanPham.so_luong) {
+      message.error(`Chỉ còn ${sanPham.so_luong} sản phẩm trong kho`);
+      return;
+    }
+
     try {
       await gioHangAPI.themSanPham(user.id, {
         ma_san_pham: sanPham.id,
@@ -99,8 +125,12 @@ export default function ProductDetailPage() {
       });
       message.success("Đang chuyển đến giỏ hàng...");
       router.push("/cart");
-    } catch (error) {
-      message.error("Không thể mua hàng");
+    } catch (error: any) {
+      if (error.response?.data?.message) {
+        message.error(error.response.data.message);
+      } else {
+        message.error("Không thể mua hàng");
+      }
     }
   };
 
@@ -197,10 +227,39 @@ export default function ProductDetailPage() {
                     color: "#ff4d4f",
                     fontSize: 36,
                     fontWeight: "bold",
-                    marginBottom: 24,
+                    marginBottom: 16,
                   }}>
                   {sanPham.gia.toLocaleString("vi-VN")} VNĐ
                 </h2>
+
+                {/* Thông tin tồn kho */}
+                <div style={{ marginBottom: 24 }}>
+                  {sanPham.so_luong !== undefined && (
+                    <div style={{ marginBottom: 8 }}>
+                      <span style={{ fontWeight: "bold" }}>Tình trạng: </span>
+                      {sanPham.so_luong > 0 ? (
+                        <span style={{ color: "#52c41a" }}>
+                          Còn hàng ({sanPham.so_luong} sản phẩm)
+                        </span>
+                      ) : (
+                        <span style={{ color: "#ff4d4f" }}>Hết hàng</span>
+                      )}
+                    </div>
+                  )}
+
+                  {sanPham.so_luong && sanPham.so_luong > 0 && (
+                    <div style={{ marginBottom: 16 }}>
+                      <span style={{ marginRight: 8 }}>Số lượng:</span>
+                      <InputNumber
+                        min={1}
+                        max={sanPham.so_luong}
+                        value={soLuong}
+                        onChange={(value) => setSoLuong(value || 1)}
+                        style={{ width: 80 }}
+                      />
+                    </div>
+                  )}
+                </div>
 
                 {/* Tabs Mô tả và Thông số */}
                 <Tabs
@@ -235,6 +294,9 @@ export default function ProductDetailPage() {
                       type="primary"
                       danger
                       size="large"
+                      disabled={
+                        sanPham.so_luong !== undefined && sanPham.so_luong <= 0
+                      }
                       style={{
                         height: 50,
                         fontSize: 16,
@@ -242,11 +304,16 @@ export default function ProductDetailPage() {
                         flex: 1,
                       }}
                       onClick={handleBuyNow}>
-                      MUA NGAY
+                      {sanPham.so_luong !== undefined && sanPham.so_luong <= 0
+                        ? "HẾT HÀNG"
+                        : "MUA NGAY"}
                     </Button>
                     <Button
                       size="large"
                       icon={<ShoppingCartOutlined />}
+                      disabled={
+                        sanPham.so_luong !== undefined && sanPham.so_luong <= 0
+                      }
                       style={{ height: 50, fontSize: 16, flex: 1 }}
                       onClick={handleAddToCart}>
                       THÊM VÀO GIỎ

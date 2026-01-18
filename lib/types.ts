@@ -22,6 +22,8 @@ export interface SanPham {
   thong_so_ky_thuat?: string;
   noi_bat?: boolean;
   da_xoa?: boolean; // Soft delete flag
+  so_luong?: number; // Số lượng tồn kho
+  an?: boolean; // Trạng thái ẩn (true nếu hết hàng)
 }
 
 export interface DanhMuc {
