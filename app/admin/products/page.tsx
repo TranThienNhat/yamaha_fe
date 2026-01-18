@@ -32,8 +32,8 @@ function ProductCategories({ productId }: { productId: number }) {
   useEffect(() => {
     sanPhamAPI
       .layDanhMuc(productId)
-      .then((res) => {
-        setCategories(res.data.map((dm: unknown) => dm.ten_danh_muc));
+      .then((res: any) => {
+        setCategories(res.data.map((dm: any) => dm.ten_danh_muc));
       })
       .catch(() => setCategories([]));
   }, [productId]);
@@ -44,7 +44,7 @@ function ProductCategories({ productId }: { productId: number }) {
 export default function AdminProductsPage() {
   const { message } = App.useApp();
   const [sanPhams, setSanPhams] = useState<SanPham[]>([]);
-  const [danhMucs, setDanhMucs] = useState<unknown[]>([]);
+  const [danhMucs, setDanhMucs] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [categoryModalVisible, setCategoryModalVisible] = useState(false);
@@ -54,7 +54,7 @@ export default function AdminProductsPage() {
   const [form] = Form.useForm();
   const [categoryForm] = Form.useForm();
   const [quantityForm] = Form.useForm();
-  const [fileList, setFileList] = useState<unknown[]>([]);
+  const [fileList, setFileList] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchSanPhams = async () => {
@@ -121,7 +121,7 @@ export default function AdminProductsPage() {
       const response = await sanPhamAPI.layDanhMuc(record.id);
       form.setFieldsValue({
         ...record,
-        danh_muc_ids: response.data.map((dm: unknown) => dm.id),
+        danh_muc_ids: response.data.map((dm: any) => dm.id),
       });
     } catch (error) {
       form.setFieldsValue(record);
@@ -149,7 +149,7 @@ export default function AdminProductsPage() {
 
   const handleSubmitQuantity = async (values: { so_luong: number }) => {
     if (!selectedProduct) return;
-    
+
     try {
       await sanPhamAPI.capNhatSoLuong(selectedProduct.id, values);
       message.success("Đã cập nhật số lượng thành công");
@@ -159,8 +159,10 @@ export default function AdminProductsPage() {
       message.error("Không thể cập nhật số lượng");
     }
   };
+
+  const handleToggleNoiBat = async (id: number, noiBat: boolean) => {
     try {
-      const product = sanPhams.find((sp) => sp.id === id);
+      const product = sanPhams.find((sp: SanPham) => sp.id === id);
       if (!product) return;
 
       const formData = new FormData();
@@ -169,6 +171,7 @@ export default function AdminProductsPage() {
       formData.append("mo_ta", product.mo_ta || "");
       formData.append("thong_so_ky_thuat", product.thong_so_ky_thuat || "");
       formData.append("noi_bat", noiBat ? "1" : "0");
+      formData.append("so_luong", (product.so_luong || 0).toString());
 
       await sanPhamAPI.sua(id, formData);
       message.success("Đã cập nhật trạng thái nổi bật");
@@ -183,7 +186,7 @@ export default function AdminProductsPage() {
     setCategoryModalVisible(true);
   };
 
-  const handleSubmitCategory = async (values: unknown) => {
+  const handleSubmitCategory = async (values: any) => {
     try {
       const response = await danhMucAPI.them(values);
       message.success("Đã thêm danh mục mới thành công");
@@ -200,7 +203,7 @@ export default function AdminProductsPage() {
     }
   };
 
-  const handleSubmit = async (values: unknown) => {
+  const handleSubmit = async (values: any) => {
     try {
       console.log("DEBUG Frontend: All form values =", values);
 
@@ -228,7 +231,7 @@ export default function AdminProductsPage() {
 
       // Append nhiều file ảnh (tối đa 5)
       if (fileList.length > 0) {
-        fileList.forEach((file, index) => {
+        fileList.forEach((file: any, index: number) => {
           if (file.originFileObj) {
             formData.append("hinh_anh", file.originFileObj);
             console.log(
@@ -335,10 +338,12 @@ export default function AdminProductsPage() {
       title: "Nổi bật",
       key: "noi_bat",
       width: 100,
-      render: (_: unknown, record: SanPham) => (
+      render: (_: any, record: SanPham) => (
         <Switch
           checked={record.noi_bat}
-          onChange={(checked) => handleToggleNoiBat(record.id, checked)}
+          onChange={(checked: boolean) =>
+            handleToggleNoiBat(record.id, checked)
+          }
         />
       ),
     },
@@ -356,8 +361,7 @@ export default function AdminProductsPage() {
           <Button
             type="primary"
             size="small"
-            onClick={() => handleUpdateQuantity(record)}
-          >
+            onClick={() => handleUpdateQuantity(record)}>
             Số lượng
           </Button>
           <Popconfirm
@@ -413,10 +417,10 @@ export default function AdminProductsPage() {
             rules={[{ required: true, message: "Vui lòng nhập giá" }]}>
             <InputNumber
               style={{ width: "100%" }}
-              formatter={(value) =>
+              formatter={(value: any) =>
                 `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
               }
-              parser={(value) => value!.replace(/\$\s?|(,*)/g, "")}
+              parser={(value: any) => value!.replace(/\$\s?|(,*)/g, "")}
             />
           </Form.Item>
 
@@ -438,12 +442,12 @@ export default function AdminProductsPage() {
               allowClear
               showSearch
               style={{ width: "100%" }}
-              filterOption={(input, option) =>
+              filterOption={(input: string, option: any) =>
                 (option?.label ?? "")
                   .toLowerCase()
                   .includes(input.toLowerCase())
               }
-              options={danhMucs.map((dm) => ({
+              options={danhMucs.map((dm: any) => ({
                 value: dm.id,
                 label: dm.ten_danh_muc,
               }))}
@@ -482,7 +486,7 @@ export default function AdminProductsPage() {
             <Upload
               listType="picture-card"
               fileList={fileList}
-              onChange={({ fileList }) => setFileList(fileList)}
+              onChange={({ fileList }: any) => setFileList(fileList)}
               beforeUpload={() => false}
               maxCount={5}
               multiple>
@@ -536,7 +540,7 @@ export default function AdminProductsPage() {
               placeholder="Nhập số lượng sản phẩm"
             />
           </Form.Item>
-          <p style={{ color: '#666', fontSize: '14px' }}>
+          <p style={{ color: "#666", fontSize: "14px" }}>
             Lưu ý: Khi số lượng = 0, sản phẩm sẽ tự động bị ẩn khỏi trang chủ
           </p>
         </Form>
