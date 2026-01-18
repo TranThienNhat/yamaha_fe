@@ -22,3 +22,16 @@ export const STORAGE_KEYS = {
   USER: "user",
   TOKEN: "token",
 };
+
+// Utility function to format price
+export const formatPrice = (price: number): string => {
+  // If the price is a whole number, don't show decimals
+  if (price % 1 === 0) {
+    return price.toLocaleString("vi-VN");
+  }
+  // Otherwise, show with decimals
+  return price.toLocaleString("vi-VN", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  });
+};

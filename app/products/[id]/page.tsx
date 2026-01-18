@@ -15,6 +15,7 @@ import { ShoppingCartOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useRouter, useParams } from "next/navigation";
 import { sanPhamAPI, gioHangAPI } from "@/lib/api";
 import { authUtils } from "@/lib/auth";
+import { formatPrice } from "@/lib/constants";
 import type { SanPham } from "@/lib/types";
 import BannerAd from "@/components/BannerAd";
 
@@ -229,17 +230,17 @@ export default function ProductDetailPage() {
                     fontWeight: "bold",
                     marginBottom: 16,
                   }}>
-                  {sanPham.gia.toLocaleString("vi-VN")} VNĐ
+                  {formatPrice(sanPham.gia)} VNĐ
                 </h2>
 
                 {/* Thông tin tồn kho */}
                 <div style={{ marginBottom: 24 }}>
                   {sanPham.so_luong !== undefined && (
                     <div style={{ marginBottom: 8 }}>
-                      <span style={{ fontWeight: "bold" }}>Tình trạng: </span>
+                      <span style={{ fontWeight: "bold" }}>Số lượng: </span>
                       {sanPham.so_luong > 0 ? (
                         <span style={{ color: "#52c41a" }}>
-                          Còn hàng ({sanPham.so_luong} sản phẩm)
+                          {sanPham.so_luong}
                         </span>
                       ) : (
                         <span style={{ color: "#ff4d4f" }}>Hết hàng</span>

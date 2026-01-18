@@ -5,6 +5,7 @@ import { Card, Row, Col, Typography } from "antd";
 import { FireOutlined, FileTextOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { sanPhamAPI, tinTucAPI } from "@/lib/api";
+import { formatPrice } from "@/lib/constants";
 import type { SanPham, TinTuc } from "@/lib/types";
 import BannerAd from "@/components/BannerAd";
 import MainLayout from "@/components/MainLayout";
@@ -165,7 +166,7 @@ export default function Home() {
                         fontSize: 16,
                         fontWeight: 600,
                       }}>
-                      {sp.gia.toLocaleString("vi-VN")}đ
+                      {formatPrice(sp.gia)}đ
                     </Text>
                   </Card>
                 </Col>

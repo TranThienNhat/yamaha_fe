@@ -23,6 +23,7 @@ import {
   UploadOutlined,
 } from "@ant-design/icons";
 import { sanPhamAPI, danhMucAPI } from "@/lib/api";
+import { formatPrice } from "@/lib/constants";
 import type { SanPham } from "@/lib/types";
 
 // Component hiển thị danh mục của sản phẩm
@@ -303,7 +304,7 @@ export default function AdminProductsPage() {
       title: "Giá",
       dataIndex: "gia",
       key: "gia",
-      render: (gia: number) => `${gia.toLocaleString("vi-VN")} đ`,
+      render: (gia: number) => `${formatPrice(gia)} đ`,
     },
     {
       title: "Số lượng",

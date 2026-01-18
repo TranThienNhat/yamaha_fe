@@ -16,6 +16,7 @@ import { DeleteOutlined, ShoppingOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { authUtils } from "@/lib/auth";
 import { gioHangAPI, donHangAPI } from "@/lib/api";
+import { formatPrice } from "@/lib/constants";
 import type { GioHang } from "@/lib/types";
 
 export default function CartPage() {
@@ -72,6 +73,12 @@ export default function CartPage() {
       message.warning("Giỏ hàng trống");
       return;
     }
+
+    if (!hasValidItems) {
+      message.warning("Không có sản phẩm hợp lệ để đặt hàng");
+      return;
+    }
+
     form.setFieldsValue({
       ten_khach_hang: user?.ho_ten || "",
       so_dien_thoai: user?.sdt || "",
@@ -83,12 +90,22 @@ export default function CartPage() {
     if (!user || !gioHang) return;
 
     try {
+      // Chỉ lấy sản phẩm còn hàng
+      const validItems = gioHang.chi_tiet.filter(
+        (item: any) => item.so_luong_ton > 0 && !item.an
+      );
+
+      if (validItems.length === 0) {
+        message.error("Không có sản phẩm hợp lệ để đặt hàng");
+        return;
+      }
+
       const orderData = {
         ma_nguoi_dung: user.id,
         ten_khach_hang: values.ten_khach_hang,
         so_dien_thoai: values.so_dien_thoai,
         dia_chi: values.dia_chi,
-        chi_tiet_san_pham: gioHang.chi_tiet.map((item: any) => ({
+        chi_tiet_san_pham: validItems.map((item: any) => ({
           ma_san_pham: item.ma_san_pham,
           so_luong: item.so_luong,
         })),
@@ -109,30 +126,76 @@ export default function CartPage() {
       title: "Sản phẩm",
       dataIndex: "ten_san_pham",
       key: "ten_san_pham",
+      render: (text: string, record: any) => (
+        <div
+          style={{
+            opacity: record.so_luong_ton <= 0 || record.an ? 0.5 : 1,
+            position: "relative",
+          }}
+          title={
+            record.so_luong_ton <= 0 || record.an ? "Hết hàng" : undefined
+          }>
+          {text}
+          {(record.so_luong_ton <= 0 || record.an) && (
+            <span
+              style={{
+                color: "#ff4d4f",
+                fontSize: "12px",
+                marginLeft: "8px",
+                fontWeight: "bold",
+              }}>
+              (Hết hàng)
+            </span>
+          )}
+        </div>
+      ),
     },
     {
       title: "Đơn giá",
       dataIndex: "gia",
       key: "gia",
-      render: (gia: number) => `${gia.toLocaleString("vi-VN")} đ`,
+      render: (gia: number, record: any) => (
+        <span
+          style={{
+            opacity: record.so_luong_ton <= 0 || record.an ? 0.5 : 1,
+          }}>
+          {formatPrice(gia)} đ
+        </span>
+      ),
     },
     {
       title: "Số lượng",
       dataIndex: "so_luong",
       key: "so_luong",
       render: (soLuong: number, record: any) => (
-        <InputNumber
-          min={1}
-          value={soLuong}
-          onChange={(value) => handleUpdateQuantity(record.id, value || 1)}
-        />
+        <div
+          style={{
+            opacity: record.so_luong_ton <= 0 || record.an ? 0.5 : 1,
+          }}>
+          <InputNumber
+            min={1}
+            max={record.so_luong_ton || 1}
+            value={soLuong}
+            disabled={record.so_luong_ton <= 0 || record.an}
+            onChange={(value) => handleUpdateQuantity(record.id, value || 1)}
+          />
+        </div>
       ),
     },
     {
       title: "Thành tiền",
       dataIndex: "thanh_tien",
       key: "thanh_tien",
-      render: (tien: number) => `${tien.toLocaleString("vi-VN")} đ`,
+      render: (tien: number, record: any) => (
+        <span
+          style={{
+            opacity: record.so_luong_ton <= 0 || record.an ? 0.5 : 1,
+            textDecoration:
+              record.so_luong_ton <= 0 || record.an ? "line-through" : "none",
+          }}>
+          {formatPrice(tien)} đ
+        </span>
+      ),
     },
     {
       title: "Thao tác",
@@ -149,10 +212,17 @@ export default function CartPage() {
   ];
 
   const tongTien =
-    gioHang?.chi_tiet.reduce(
-      (sum: number, item: any) => sum + item.thanh_tien,
-      0
-    ) || 0;
+    gioHang?.chi_tiet.reduce((sum: number, item: any) => {
+      // Chỉ tính tiền cho sản phẩm còn hàng
+      if (item.so_luong_ton > 0 && !item.an) {
+        return sum + item.thanh_tien;
+      }
+      return sum;
+    }, 0) || 0;
+
+  const hasValidItems = gioHang?.chi_tiet.some(
+    (item: any) => item.so_luong_ton > 0 && !item.an
+  );
 
   return (
     <>
@@ -166,11 +236,12 @@ export default function CartPage() {
               pagination={false}
             />
             <div style={{ marginTop: 24, textAlign: "right" }}>
-              <h2>Tổng cộng: {tongTien.toLocaleString("vi-VN")} đ</h2>
+              <h2>Tổng cộng: {formatPrice(tongTien)} đ</h2>
               <Button
                 type="primary"
                 size="large"
                 icon={<ShoppingOutlined />}
+                disabled={!hasValidItems}
                 onClick={handleCheckout}>
                 Đặt hàng
               </Button>

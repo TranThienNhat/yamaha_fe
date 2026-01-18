@@ -40,7 +40,9 @@ function RegisterForm() {
     try {
       await nguoiDungAPI.dangKy(values);
       message.success("Đăng ký thành công! Vui lòng đăng nhập.");
-      router.push(`/login?redirect=${encodeURIComponent(redirectUrl)}`);
+
+      // Use replace instead of push to avoid back button issues
+      router.replace(`/login?redirect=${encodeURIComponent(redirectUrl)}`);
     } catch (error) {
       const err = error as { response?: { data?: { error?: string } } };
       message.error(err.response?.data?.error || "Đăng ký thất bại!");

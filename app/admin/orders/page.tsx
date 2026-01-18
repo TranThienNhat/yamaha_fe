@@ -14,7 +14,7 @@ import {
 import { EyeOutlined } from "@ant-design/icons";
 import { donHangAPI } from "@/lib/api";
 import type { DonHang } from "@/lib/types";
-import { TrangThaiDonHang } from "@/lib/constants";
+import { TrangThaiDonHang, formatPrice } from "@/lib/constants";
 
 export default function AdminOrdersPage() {
   const [donHangs, setDonHangs] = useState<DonHang[]>([]);
@@ -102,7 +102,7 @@ export default function AdminOrdersPage() {
       title: "Tổng tiền",
       dataIndex: "tong_gia",
       key: "tong_gia",
-      render: (gia: number) => `${gia.toLocaleString("vi-VN")} đ`,
+      render: (gia: number) => `${formatPrice(gia)} đ`,
     },
     {
       title: "Trạng thái",
@@ -233,22 +233,20 @@ export default function AdminOrdersPage() {
                   dataIndex: "don_gia",
                   key: "don_gia",
                   width: 150,
-                  render: (gia: number) => `${gia.toLocaleString("vi-VN")} đ`,
+                  render: (gia: number) => `${formatPrice(gia)} đ`,
                 },
                 {
                   title: "Thành tiền",
                   dataIndex: "thanh_tien",
                   key: "thanh_tien",
                   width: 150,
-                  render: (tien: number) => `${tien.toLocaleString("vi-VN")} đ`,
+                  render: (tien: number) => `${formatPrice(tien)} đ`,
                 },
               ]}
             />
 
             <div style={{ marginTop: 16, textAlign: "right" }}>
-              <h2>
-                Tổng cộng: {selectedOrder.tong_gia.toLocaleString("vi-VN")} đ
-              </h2>
+              <h2>Tổng cộng: {formatPrice(selectedOrder.tong_gia)} đ</h2>
             </div>
           </>
         )}

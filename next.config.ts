@@ -9,35 +9,17 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
 
-  // Cấu hình ảnh
+  // Cấu hình ảnh - LOCAL ONLY
   images: {
-    unoptimized: true, // Cho phép load ảnh HTTP từ VPS
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "http",
-        hostname: "163.223.13.199",
-        port: "",
-        pathname: "/uploads/**",
-      },
-      {
-        protocol: "http",
-        hostname: "localhost",
+        hostname: "127.0.0.1",
         port: "5000",
         pathname: "/uploads/**",
       },
     ],
-  },
-
-  // --- QUAN TRỌNG: CẤU HÌNH PROXY ---
-  async rewrites() {
-    return [
-      {
-        // Khi Frontend gọi: /api/nguoidung/dangnhap
-        source: "/api/:path*",
-        // Vercel sẽ âm thầm gọi sang: http://163.223.13.199/nguoidung/dangnhap
-        destination: "http://163.223.13.199/:path*",
-      },
-    ];
   },
 };
 

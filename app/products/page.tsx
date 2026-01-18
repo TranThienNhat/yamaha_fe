@@ -22,6 +22,7 @@ import {
 import { useRouter } from "next/navigation";
 import { sanPhamAPI, gioHangAPI, danhMucAPI } from "@/lib/api";
 import { authUtils } from "@/lib/auth";
+import { formatPrice } from "@/lib/constants";
 import type { SanPham, DanhMuc } from "@/lib/types";
 import BannerAd from "@/components/BannerAd";
 import MainLayout from "@/components/MainLayout";
@@ -311,7 +312,7 @@ export default function ProductsPage() {
                           fontSize: 16,
                           fontWeight: 600,
                         }}>
-                        {sp.gia.toLocaleString("vi-VN")}đ
+                        {formatPrice(sp.gia)}đ
                       </Text>
                     </div>
                   </Card>
